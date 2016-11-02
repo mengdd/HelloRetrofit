@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">HelloRetrofit</string>
     <string name="get_all_endpoints">Get All Endpoints</string>
-    <string name="bottom_navigation_item_me">Me</string>
+    <string name="bottom_navigation_item_user">User</string>
     <string name="bottom_navigation_item_repo">Repo</string>
     <string name="bottom_navigation_item_people">People</string>
     <string name="input_hint_username">Username</string>
     <string name="get_user_information">Get User Information</string>
     <string name="user_not_found">User not found!</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

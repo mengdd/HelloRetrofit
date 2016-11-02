@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_user"
         android:icon="@drawable/ic_face_black_24dp"
-        android:title="@string/bottom_navigation_item_me"
+        android:title="@string/bottom_navigation_item_user"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_repo"

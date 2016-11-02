@@ -9,6 +9,8 @@ import com.ddmeng.helloretrofit.data.remote.GitHubService;
 import com.ddmeng.helloretrofit.data.remote.ServiceGenerator;
 import com.ddmeng.helloretrofit.utils.LogUtils;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -19,10 +21,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getAllEndpoints();
+        ButterKnife.bind(this);
     }
 
-    private void getAllEndpoints() {
+    @OnClick(R.id.get_all_endpoints)
+    void getAllEndpoints() {
         GitHubService gitHubService = ServiceGenerator.createService(GitHubService.class);
         Call<Endpoints> endpointsCall = gitHubService.getAllEndpoints("");
         endpointsCall.enqueue(new Callback<Endpoints>() {

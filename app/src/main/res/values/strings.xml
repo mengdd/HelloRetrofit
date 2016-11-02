@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">HelloRetrofit</string>
     <string name="get_all_endpoints">Get All Endpoints</string>
+    <string name="bottom_navigation_item_me">Me</string>
+    <string name="bottom_navigation_item_repo">Repo</string>
+    <string name="bottom_navigation_item_people">People</string>
 </resources>

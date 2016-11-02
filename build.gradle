@@ -13,6 +13,12 @@ buildscript {
     }
 }
 
+
+ext {
+    supportLibVersion = '25.0.0'
+    butterKnifeVersion = '8.4.0'
+}
+
 allprojects {
     repositories {
         jcenter()

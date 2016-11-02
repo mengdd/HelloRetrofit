@@ -4,4 +4,7 @@
     <string name="bottom_navigation_item_me">Me</string>
     <string name="bottom_navigation_item_repo">Repo</string>
     <string name="bottom_navigation_item_people">People</string>
+    <string name="input_hint_username">Username</string>
+    <string name="get_user_information">Get User Information</string>
+    <string name="user_not_found">User not found!</string>
 </resources>

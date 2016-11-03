@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -29,6 +30,9 @@ public class UserFragment extends Fragment {
     @BindView(R.id.output)
     TextView outputText;
 
+    private UserInfoViewHolder userInfoViewHolder;
+    private View userInfoContainer;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.user_fragment_layout, container, false);
@@ -49,7 +53,18 @@ public class UserFragment extends Fragment {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 User user = response.body();
-                outputText.setText(user != null ? user.getEmail() : getString(R.string.user_not_found));
+                if (user != null) {
+                    if (userInfoContainer == null) {
+                        ViewStub userInfoStub = (ViewStub) getView().findViewById(R.id.user_info_stub);
+                        userInfoContainer = userInfoStub.inflate();
+                    }
+                    userInfoViewHolder = new UserInfoViewHolder(userInfoContainer);
+                    userInfoViewHolder.populate(user);
+                    outputText.setVisibility(View.GONE);
+                } else {
+                    outputText.setVisibility(View.VISIBLE);
+                    outputText.setText(getString(R.string.user_not_found));
+                }
             }
 
             @Override

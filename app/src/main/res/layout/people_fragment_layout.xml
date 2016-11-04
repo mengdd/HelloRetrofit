@@ -1,13 +1,26 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin"
     tools:context="com.ddmeng.helloretrofit.ui.people.PeopleFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <EditText
+        android:id="@+id/input_user_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:hint="@string/input_hint_username" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/get_user_following"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/get_user_following" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/following_people"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

@@ -20,4 +20,7 @@ public interface GitHubService {
 
     @GET("users/{user}/repos")
     Call<List<Repo>> getUserRepos(@Path("user") String user);
+
+    @GET("users/{user}/following")
+    Call<List<User>> getUserFollowing(@Path("user") String user);
 }

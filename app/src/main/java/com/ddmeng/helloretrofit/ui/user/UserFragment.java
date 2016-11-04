@@ -52,6 +52,10 @@ public class UserFragment extends Fragment {
         userCall.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
+                if (!isAdded()) {
+                    return;
+                }
+
                 User user = response.body();
                 if (user != null) {
                     if (userInfoContainer == null) {

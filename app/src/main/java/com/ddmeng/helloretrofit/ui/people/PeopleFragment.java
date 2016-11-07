@@ -90,8 +90,15 @@ public class PeopleFragment extends Fragment {
                 .flatMap(new Func1<User, Observable<User>>() {
                     @Override
                     public Observable<User> call(User user) {
-                        LogUtils.i("getUserObservable: " + user.getLogin());
-                        return service.getUserObservable(user.getLogin());
+                        return service.getUserObservable(user.getLogin())
+                                .map(new Func1<User, User>() {
+                                    @Override
+                                    public User call(User user) {
+                                        // this .map is used to output log information to check the threads
+                                        LogUtils.i("getUserObservable: " + user.getLogin());
+                                        return user;
+                                    }
+                                });
                     }
                 })
                 .toList()

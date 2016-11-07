@@ -24,8 +24,11 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 
@@ -38,6 +41,7 @@ public class PeopleFragment extends Fragment {
     RecyclerView peopleRecyclerView;
 
     private PeopleListAdapter peopleListAdapter;
+    private Subscription subscription;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,6 +54,14 @@ public class PeopleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         initViews();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (subscription != null && subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
+        }
     }
 
     private void initViews() {
@@ -67,8 +79,22 @@ public class PeopleFragment extends Fragment {
 //        requestWithRetrofit(service, username);
     }
 
-    private void requestWithRetrofitAndRxJava(GitHubService service, String username) {
-        service.getUserFollowingObservable(username)
+    private void requestWithRetrofitAndRxJava(final GitHubService service, final String username) {
+        subscription = service.getUserFollowingObservable(username)
+                .flatMap(new Func1<List<User>, Observable<User>>() {
+                    @Override
+                    public Observable<User> call(List<User> users) {
+                        return Observable.from(users);
+                    }
+                })
+                .flatMap(new Func1<User, Observable<User>>() {
+                    @Override
+                    public Observable<User> call(User user) {
+                        LogUtils.i("getUserObservable: " + user.getLogin());
+                        return service.getUserObservable(user.getLogin());
+                    }
+                })
+                .toList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<User>>() {

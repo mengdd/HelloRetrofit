@@ -15,6 +15,12 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.login_name)
     TextView loginNameText;
+    @BindView(R.id.public_repos)
+    TextView publicReposText;
+    @BindView(R.id.following)
+    TextView followingText;
+    @BindView(R.id.followers)
+    TextView followersText;
 
     private View view;
     private Context context;
@@ -28,5 +34,8 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
 
     public void populate(User user) {
         loginNameText.setText(String.format(context.getString(R.string.user_login_name), user.getLogin()));
+        publicReposText.setText(String.format(context.getString(R.string.user_public_repos), user.getPublicRepos()));
+        followingText.setText(String.format(context.getString(R.string.user_following), user.getFollowing()));
+        followersText.setText(String.format(context.getString(R.string.user_followers), user.getFollowers()));
     }
 }

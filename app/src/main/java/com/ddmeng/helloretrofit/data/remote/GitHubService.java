@@ -10,6 +10,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Url;
+import rx.Observable;
 
 public interface GitHubService {
     @GET
@@ -21,6 +22,11 @@ public interface GitHubService {
     @GET("users/{user}/repos")
     Call<List<Repo>> getUserRepos(@Path("user") String user);
 
+    // Not using RxJava
     @GET("users/{user}/following")
     Call<List<User>> getUserFollowing(@Path("user") String user);
+
+    // Using RxJava
+    @GET("users/{user}/following")
+    Observable<List<User>> getUserFollowingObservable(@Path("user") String user);
 }

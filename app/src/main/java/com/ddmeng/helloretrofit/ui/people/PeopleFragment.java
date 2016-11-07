@@ -14,6 +14,7 @@ import com.ddmeng.helloretrofit.R;
 import com.ddmeng.helloretrofit.data.models.User;
 import com.ddmeng.helloretrofit.data.remote.GitHubService;
 import com.ddmeng.helloretrofit.data.remote.ServiceGenerator;
+import com.ddmeng.helloretrofit.utils.LogUtils;
 
 import java.util.List;
 
@@ -23,6 +24,9 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class PeopleFragment extends Fragment {
@@ -57,7 +61,38 @@ public class PeopleFragment extends Fragment {
     @OnClick(R.id.get_user_following)
     void getUserFollowing() {
         GitHubService service = ServiceGenerator.createService(GitHubService.class);
-        Call<List<User>> userFollowing = service.getUserFollowing(inputUserNameView.getText().toString());
+        String username = inputUserNameView.getText().toString();
+
+        requestWithRetrofitAndRxJava(service, username);
+//        requestWithRetrofit(service, username);
+    }
+
+    private void requestWithRetrofitAndRxJava(GitHubService service, String username) {
+        service.getUserFollowingObservable(username)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<User>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<User> users) {
+                        LogUtils.i("onNext: " + users.size());
+                        peopleListAdapter.setUsers(users);
+                        peopleListAdapter.notifyDataSetChanged();
+                    }
+                });
+    }
+
+    private void requestWithRetrofit(GitHubService service, String username) {
+        Call<List<User>> userFollowing = service.getUserFollowing(username);
         userFollowing.enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
@@ -71,6 +106,5 @@ public class PeopleFragment extends Fragment {
 
             }
         });
-
     }
 }

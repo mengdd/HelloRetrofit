@@ -30,6 +30,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 
 public class PeopleFragment extends Fragment {
@@ -41,7 +42,7 @@ public class PeopleFragment extends Fragment {
     RecyclerView peopleRecyclerView;
 
     private PeopleListAdapter peopleListAdapter;
-    private Subscription subscription;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,9 +60,7 @@ public class PeopleFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (subscription != null && subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
-        }
+        compositeSubscription.unsubscribe();
     }
 
     private void initViews() {
@@ -80,7 +79,7 @@ public class PeopleFragment extends Fragment {
     }
 
     private void requestWithRetrofitAndRxJava(final GitHubService service, final String username) {
-        subscription = service.getUserFollowingObservable(username)
+        Subscription subscription = service.getUserFollowingObservable(username)
                 .subscribeOn(Schedulers.io())
                 .flatMap(new Func1<List<User>, Observable<User>>() {
                     @Override
@@ -124,6 +123,7 @@ public class PeopleFragment extends Fragment {
                         peopleListAdapter.notifyDataSetChanged();
                     }
                 });
+        compositeSubscription.add(subscription);
     }
 
     private void requestWithRetrofit(GitHubService service, String username) {

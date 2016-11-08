@@ -9,13 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.ddmeng.helloretrofit.R;
+import com.ddmeng.helloretrofit.data.models.Repo;
 import com.ddmeng.helloretrofit.data.models.User;
 import com.ddmeng.helloretrofit.data.remote.GitHubService;
 import com.ddmeng.helloretrofit.data.remote.ServiceGenerator;
 import com.ddmeng.helloretrofit.utils.LogUtils;
 
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -28,7 +31,9 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
@@ -40,6 +45,8 @@ public class PeopleFragment extends Fragment {
     EditText inputUserNameView;
     @BindView(R.id.following_people)
     RecyclerView peopleRecyclerView;
+    @BindView(R.id.repo_statistics)
+    TextView repoStatisticsView;
 
     private PeopleListAdapter peopleListAdapter;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
@@ -76,6 +83,54 @@ public class PeopleFragment extends Fragment {
 
         requestWithRetrofitAndRxJava(service, username);
 //        requestWithRetrofit(service, username);
+    }
+
+    @OnClick(R.id.get_repo_statistics)
+    void getRepoStatistics() {
+        repoStatisticsView.setVisibility(View.VISIBLE);
+        repoStatisticsView.setText(R.string.loading_message);
+        final GitHubService service = ServiceGenerator.createService(GitHubService.class);
+        final String username = inputUserNameView.getText().toString();
+        Subscription subscription = service.getUserFollowingObservable(username)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .flatMap(new Func1<List<User>, Observable<User>>() {
+                    @Override
+                    public Observable<User> call(List<User> users) {
+                        return Observable.from(users);
+                    }
+                })
+                .flatMap(new Func1<User, Observable<List<Repo>>>() {
+                    @Override
+                    public Observable<List<Repo>> call(User user) {
+                        return service.getUserReposObservable(user.getLogin()).subscribeOn(Schedulers.io());
+                    }
+                })
+                .flatMap(new Func1<List<Repo>, Observable<Repo>>() {
+                    @Override
+                    public Observable<Repo> call(List<Repo> repos) {
+                        return Observable.from(repos);
+                    }
+                })
+                .reduce(new HashMap<String, Integer>(), new Func2<HashMap<String, Integer>, Repo, HashMap<String, Integer>>() {
+                    @Override
+                    public HashMap<String, Integer> call(HashMap<String, Integer> repoStatistics, Repo repo) {
+                        if (repoStatistics.containsKey(repo.getLanguage())) {
+                            repoStatistics.put(repo.getLanguage(), repoStatistics.get(repo.getLanguage()) + 1);
+                        } else {
+                            repoStatistics.put(repo.getLanguage(), 1);
+                        }
+                        return repoStatistics;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<HashMap<String, Integer>>() {
+                    @Override
+                    public void call(HashMap<String, Integer> repoStatisticsMap) {
+                        repoStatisticsView.setText(repoStatisticsMap.toString());
+                    }
+                });
+        compositeSubscription.add(subscription);
     }
 
     private void requestWithRetrofitAndRxJava(final GitHubService service, final String username) {

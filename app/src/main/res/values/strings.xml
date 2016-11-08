@@ -18,5 +18,7 @@
     <string name="get_user_repos">Get User Repos</string>
 
     <string name="get_user_following">Get User Following</string>
+    <string name="get_repo_statistics">Get Repo Statistics</string>
     <string name="user_login_name">%s</string>
+    <string name="loading_message">Loading ...</string>
 </resources>

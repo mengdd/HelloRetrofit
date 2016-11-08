@@ -18,6 +18,18 @@
         android:layout_height="wrap_content"
         android:text="@string/get_user_following" />
 
+    <Button
+        android:id="@+id/get_repo_statistics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/get_repo_statistics" />
+
+    <TextView
+        android:id="@+id/repo_statistics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/following_people"
         android:layout_width="match_parent"

@@ -81,9 +81,11 @@ public class PeopleFragment extends Fragment {
 
     private void requestWithRetrofitAndRxJava(final GitHubService service, final String username) {
         subscription = service.getUserFollowingObservable(username)
+                .subscribeOn(Schedulers.io())
                 .flatMap(new Func1<List<User>, Observable<User>>() {
                     @Override
                     public Observable<User> call(List<User> users) {
+                        LogUtils.i("from");
                         return Observable.from(users);
                     }
                 })
@@ -91,10 +93,11 @@ public class PeopleFragment extends Fragment {
                     @Override
                     public Observable<User> call(User user) {
                         return service.getUserObservable(user.getLogin())
+                                .subscribeOn(Schedulers.io())
                                 .map(new Func1<User, User>() {
                                     @Override
                                     public User call(User user) {
-                                        // this .map is used to output log information to check the threads
+                                        // this map operation is just used for showing log
                                         LogUtils.i("getUserObservable: " + user.getLogin());
                                         return user;
                                     }
@@ -102,7 +105,6 @@ public class PeopleFragment extends Fragment {
                     }
                 })
                 .toList()
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<User>>() {
                     @Override

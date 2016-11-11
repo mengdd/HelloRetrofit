@@ -1,6 +1,8 @@
 # HelloRetrofit
 Android Retrofit sample.
 
+My blog post for this: [Retrofit结合RxJava使用指南](http://www.cnblogs.com/mengdd/p/6047948.html)
+
 ## API
 - [Github API v3](https://developer.github.com/v3/)
 
